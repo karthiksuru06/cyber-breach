@@ -1,0 +1,260 @@
+/* CYBER GUARD AI v2.0 - VISUAL SYSTEM */
+
+:root {
+    --bg-deep: #050b18;
+    /* Deep Navy */
+    --card-glass: rgba(10, 20, 35, 0.7);
+    --neon-blue: #00d2ff;
+    --neon-purple: #9d50bb;
+    --success: #00ff88;
+    --danger: #ff0055;
+    --text-main: #e0f2f1;
+}
+
+body {
+    background-color: var(--bg-deep);
+    color: var(--text-main);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Background Grid Overlay */
+.matrix-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(var(--bg-deep) 2px, transparent 2px),
+        linear-gradient(90deg, var(--bg-deep) 2px, transparent 2px);
+    background-size: 50px 50px;
+    background-position: center center;
+    opacity: 0.15;
+    z-index: -1;
+}
+
+.matrix-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 30%, rgba(0, 210, 255, 0.1), transparent 70%);
+}
+
+/* Typography */
+h1,
+h3,
+h4,
+.logo-container {
+    font-family: 'Orbitron', sans-serif;
+}
+
+.font-mono {
+    font-family: 'Courier New', monospace;
+}
+
+.tracking-wide {
+    letter-spacing: 2px;
+}
+
+.tracking-widest {
+    letter-spacing: 4px;
+}
+
+.text-main-glow {
+    color: var(--neon-blue);
+    text-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
+}
+
+.text-accent {
+    color: var(--neon-purple);
+}
+
+.text-cyan {
+    color: var(--neon-blue) !important;
+}
+
+.text-purple {
+    color: var(--neon-purple) !important;
+}
+
+.text-light-50 {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Glassmorphism Cards */
+.cyber-card {
+    background: var(--card-glass);
+    border: 1px solid rgba(0, 210, 255, 0.1);
+    border-radius: 8px;
+    padding: 0;
+    position: relative;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.cyber-card:hover {
+    border-color: rgba(0, 210, 255, 0.3);
+    box-shadow: 0 15px 40px rgba(0, 210, 255, 0.1);
+}
+
+.card-header {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Scanner Line Animation */
+.card-scanner-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--neon-blue);
+    box-shadow: 0 0 15px var(--neon-blue);
+    display: none;
+    z-index: 10;
+    opacity: 0.8;
+}
+
+/* Forms & Inputs */
+.bg-darker {
+    background: rgba(0, 0, 0, 0.6) !important;
+}
+
+.form-control {
+    border-left: 0;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+.neon-input:focus {
+    color: var(--neon-blue) !important;
+}
+
+.border-cyan {
+    border-color: rgba(0, 210, 255, 0.3) !important;
+}
+
+.border-purple {
+    border-color: rgba(157, 80, 187, 0.3) !important;
+}
+
+/* Buttons */
+.btn-cyber-cyan {
+    background: linear-gradient(90deg, rgba(0, 210, 255, 0.1), rgba(0, 210, 255, 0.05));
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-blue);
+    text-shadow: 0 0 5px rgba(0, 210, 255, 0.8);
+    transition: all 0.3s;
+}
+
+.btn-cyber-cyan:hover {
+    background: var(--neon-blue);
+    color: #000;
+    box-shadow: 0 0 25px rgba(0, 210, 255, 0.4);
+}
+
+.btn-cyber-purple {
+    background: linear-gradient(90deg, rgba(157, 80, 187, 0.1), rgba(157, 80, 187, 0.05));
+    border: 1px solid var(--neon-purple);
+    color: var(--neon-purple);
+    text-shadow: 0 0 5px rgba(157, 80, 187, 0.8);
+    transition: all 0.3s;
+}
+
+.btn-cyber-purple:hover {
+    background: var(--neon-purple);
+    color: #fff;
+    box-shadow: 0 0 25px rgba(157, 80, 187, 0.4);
+}
+
+/* Loader */
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(5, 11, 24, 0.9);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+/* Animations included via Animate.css, adding custom pulse */
+@keyframes pulseGlow {
+    0% {
+        opacity: 0.5;
+        text-shadow: 0 0 5px var(--neon-blue);
+    }
+
+    50% {
+        opacity: 1;
+        text-shadow: 0 0 20px var(--neon-blue);
+    }
+
+    100% {
+        opacity: 0.5;
+        text-shadow: 0 0 5px var(--neon-blue);
+    }
+}
+
+.animate-pulse {
+    animation: pulseGlow 2s infinite;
+}
+
+/* Tables */
+.table-dark {
+    --bs-table-bg: transparent;
+    --bs-table-border-color: rgba(255, 255, 255, 0.1);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Progress Bars */
+.cyber-progress-container {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.cyber-progress-bar {
+    height: 100%;
+    width: 0%;
+    transition: width 1s ease-out;
+}
+
+.safe-bar {
+    background: var(--success);
+    box-shadow: 0 0 10px var(--success);
+}
+
+.danger-bar {
+    background: var(--danger);
+    box-shadow: 0 0 10px var(--danger);
+}
+
+/* Badges */
+.bg-dark-transparent {
+    background: rgba(0, 0, 0, 0.4);
+}

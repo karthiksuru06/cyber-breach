@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER GUARD AI | Secure Access</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-purple: #a855f7;
+            --bg-dark: #050b18;
+            --glass-bg: rgba(16, 23, 42, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            font-family: 'Rajdhani', sans-serif;
+            color: #e2e8f0;
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(0, 243, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .font-cyber {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+
+        .neon-border {
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.15), inset 0 0 20px rgba(0, 243, 255, 0.05);
+            animation: pulseCyan 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseCyan {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 243, 255, 0.15), inset 0 0 20px rgba(0, 243, 255, 0.05);
+            }
+
+            50% {
+                box-shadow: 0 0 35px rgba(0, 243, 255, 0.3), inset 0 0 35px rgba(0, 243, 255, 0.1);
+            }
+        }
+
+        .cyber-input {
+            background: rgba(10, 15, 30, 0.6);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            color: #00f3ff;
+            transition: all 0.3s ease;
+        }
+
+        .cyber-input:focus {
+            outline: none;
+            border-color: #00f3ff;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+            background: rgba(10, 15, 30, 0.8);
+        }
+
+        .cyber-btn {
+            background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), rgba(0, 243, 255, 0.2));
+            border: 1px solid rgba(0, 243, 255, 0.5);
+            color: #00f3ff;
+            text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-btn:hover {
+            background: rgba(0, 243, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+            text-shadow: 0 0 5px rgba(239, 68, 68, 0.4);
+        }
+
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: 50px 50px;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+            pointer-events: none;
+            z-index: -1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="cyber-grid"></div>
+
+    <div class="w-full max-w-md p-8 glass-panel neon-border rounded-xl relative z-10 mx-4">
+
+        <div class="text-center mb-8">
+            <div class="mx-auto w-16 h-16 mb-4 relative flex items-center justify-center">
+                <div class="absolute inset-0 bg-cyan-500 blur-xl opacity-20 animate-pulse rounded-full"></div>
+                <svg class="w-12 h-12 text-cyan-400 relative z-10" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                    </path>
+                </svg>
+            </div>
+            <h1
+                class="font-cyber text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 tracking-wider">
+                ACCESS SYSTEM
+            </h1>
+            <p class="text-cyan-700 text-xs tracking-[0.3em] font-semibold mt-1">IDENTITY VERIFICATION</p>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="mb-6 space-y-2">
+            {% for message in messages %}
+            <div class="alert-error px-4 py-3 rounded text-sm font-mono flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('auth.login') }}" class="space-y-6">
+            <div>
+                <label class="block text-cyan-500 text-xs font-mono mb-2 tracking-wider">USERNAME CODE</label>
+                <input type="text" name="username" required
+                    class="w-full px-4 py-3 rounded-lg cyber-input font-mono text-sm placeholder-cyan-900/50"
+                    placeholder="ENTER IDENTIFIER">
+            </div>
+
+            <div>
+                <label class="block text-cyan-500 text-xs font-mono mb-2 tracking-wider">ACCESS KEY</label>
+                <input type="password" name="password" required
+                    class="w-full px-4 py-3 rounded-lg cyber-input font-mono text-sm placeholder-cyan-900/50"
+                    placeholder="ENTER PASSWORD">
+            </div>
+
+            <button type="submit"
+                class="w-full py-3.5 rounded-lg cyber-btn font-cyber font-bold tracking-widest text-sm uppercase">
+                Initialize Login Protocol
+            </button>
+        </form>
+
+        <div class="mt-6 text-center text-xs font-mono text-gray-500">
+            Scanning for new operators...
+            <a href="{{ url_for('auth.signup') }}"
+                class="text-cyan-400 hover:text-cyan-300 ml-1 underline decoration-cyan-500/30 underline-offset-4 transition-colors">
+                Request Access Credentials
+            </a>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

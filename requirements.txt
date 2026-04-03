@@ -1,0 +1,15 @@
+flask==2.3.3
+tensorflow==2.10.0
+tf-keras==2.15.0
+h5py
+pillow==10.2.0
+python-whois==0.8.0
+sqlalchemy
+flask-sqlalchemy
+werkzeug
+numpy<2.0.0
+protobuf<4.0.0
+opencv-python>=4.8.0
+scikit-image>=0.21.0
+pandas>=2.0.0
+flask-login

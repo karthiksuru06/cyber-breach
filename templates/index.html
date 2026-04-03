@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER GUARD AI | Neural Defense Grid</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-purple: #a855f7;
+            --danger-red: #ff2a2a;
+            --safe-green: #00ff9d;
+            --bg-dark: #050b18;
+            --glass-bg: rgba(16, 23, 42, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            font-family: 'Rajdhani', sans-serif;
+            color: #e2e8f0;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(0, 243, 255, 0.06) 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.06) 0%, transparent 25%);
+        }
+
+        .font-cyber {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Pulsing Neon Borders */
+        .neon-cyan {
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.15), inset 0 0 15px rgba(0, 243, 255, 0.03);
+            animation: pulseCyan 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseCyan {
+
+            0%,
+            100% {
+                box-shadow: 0 0 15px rgba(0, 243, 255, 0.15), inset 0 0 15px rgba(0, 243, 255, 0.03);
+            }
+
+            50% {
+                box-shadow: 0 0 25px rgba(0, 243, 255, 0.3), inset 0 0 25px rgba(0, 243, 255, 0.05);
+            }
+        }
+
+        .neon-purple {
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.15), inset 0 0 15px rgba(168, 85, 247, 0.03);
+            animation: pulsePurple 3s ease-in-out infinite;
+        }
+
+        @keyframes pulsePurple {
+
+            0%,
+            100% {
+                box-shadow: 0 0 15px rgba(168, 85, 247, 0.15), inset 0 0 15px rgba(168, 85, 247, 0.03);
+            }
+
+            50% {
+                box-shadow: 0 0 25px rgba(168, 85, 247, 0.3), inset 0 0 25px rgba(168, 85, 247, 0.05);
+            }
+        }
+
+        /* Scanner Line Animations */
+        .scanner-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .scanner-cyan {
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+            box-shadow: 0 0 15px var(--neon-cyan), 0 0 30px var(--neon-cyan);
+        }
+
+        .scanner-purple {
+            background: linear-gradient(90deg, transparent, var(--neon-purple), transparent);
+            box-shadow: 0 0 15px var(--neon-purple), 0 0 30px var(--neon-purple);
+        }
+
+        .scan-active {
+            animation: laserScan 1.8s ease-in-out infinite;
+            opacity: 1;
+        }
+
+        @keyframes laserScan {
+            0% {
+                top: 0%;
+                opacity: 0;
+            }
+
+            5% {
+                opacity: 1;
+            }
+
+            95% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        /* Status Badges */
+        .badge-safe {
+            background: rgba(0, 255, 157, 0.08);
+            color: var(--safe-green);
+            border: 1px solid rgba(0, 255, 157, 0.25);
+            text-shadow: 0 0 8px rgba(0, 255, 157, 0.4);
+        }
+
+        .badge-danger {
+            background: rgba(255, 42, 42, 0.08);
+            color: var(--danger-red);
+            border: 1px solid rgba(255, 42, 42, 0.25);
+            text-shadow: 0 0 8px rgba(255, 42, 42, 0.4);
+        }
+
+        .badge-phishing {
+            background: rgba(168, 85, 247, 0.08);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            text-shadow: 0 0 8px rgba(168, 85, 247, 0.4);
+        }
+
+        .badge-legit {
+            background: rgba(0, 255, 157, 0.08);
+            color: var(--safe-green);
+            border: 1px solid rgba(0, 255, 157, 0.25);
+            text-shadow: 0 0 8px rgba(0, 255, 157, 0.4);
+        }
+
+        .badge-malware {
+            background: rgba(255, 42, 42, 0.08);
+            color: var(--danger-red);
+            border: 1px solid rgba(255, 42, 42, 0.25);
+            text-shadow: 0 0 8px rgba(255, 42, 42, 0.4);
+        }
+
+        .badge-defacement {
+            background: rgba(245, 158, 11, 0.08);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            text-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+        }
+
+        .badge-suspicious {
+            background: rgba(245, 158, 11, 0.08);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            text-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Grid Background */
+        .cyber-grid {
+            background-size: 50px 50px;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+        }
+
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+
+        /* Image preview container */
+        .img-preview-zone {
+            position: relative;
+            min-height: 120px;
+            border: 2px dashed rgba(168, 85, 247, 0.25);
+            transition: all 0.3s;
+        }
+
+        .img-preview-zone:hover,
+        .img-preview-zone.drag-over {
+            border-color: rgba(168, 85, 247, 0.6);
+            background: rgba(168, 85, 247, 0.04);
+        }
+
+        .img-preview-zone img {
+            max-height: 200px;
+            object-fit: contain;
+        }
+
+        /* Result panel entrance */
+        .result-enter {
+            animation: resultSlide 0.5s ease-out forwards;
+        }
+
+        @keyframes resultSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Engine status indicator */
+        .engine-online {
+            color: #22c55e;
+            text-shadow: 0 0 6px rgba(34, 197, 94, 0.5);
+        }
+
+        .engine-offline {
+            color: #ef4444;
+            text-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
+        }
+
+        /* Feed type badges */
+        .type-url {
+            background: rgba(0, 243, 255, 0.1);
+            color: #22d3ee;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+        }
+
+        .type-img {
+            background: rgba(168, 85, 247, 0.1);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .type-local-intel {
+            color: #f59e0b;
+            text-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Confidence bar shimmer */
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* Loading spinner */
+        .loader {
+            border: 3px solid transparent;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .loader-cyan {
+            border-top-color: var(--neon-cyan);
+            border-right-color: var(--neon-cyan);
+        }
+
+        .loader-purple {
+            border-top-color: var(--neon-purple);
+            border-right-color: var(--neon-purple);
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Feature attribution badge */
+        .feature-badge {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s;
+        }
+
+        .feature-badge:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .severity-high {
+            border-left: 3px solid #ef4444;
+        }
+
+        .severity-medium {
+            border-left: 3px solid #f59e0b;
+        }
+
+        .severity-low {
+            border-left: 3px solid #22d3ee;
+        }
+
+        /* Forensic section */
+        .forensic-section {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Layer vote indicator */
+        .vote-safe {
+            color: #00ff9d;
+        }
+
+        .vote-malicious {
+            color: #ff2a2a;
+        }
+
+        .vote-abstain {
+            color: #6b7280;
+        }
+
+        /* Analysis method badges for feed */
+        .method-local {
+            color: #f59e0b;
+        }
+
+        .method-neural {
+            color: #a855f7;
+        }
+
+        .method-consensus {
+            color: #00f3ff;
+        }
+
+        .method-whitelist {
+            color: #22c55e;
+        }
+
+        .method-safe-mode {
+            color: #ef4444;
+        }
+
+        /* Heatmap image container */
+        .heatmap-container {
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .heatmap-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        /* Anomaly region badges */
+        .anomaly-high {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .anomaly-medium {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #f59e0b;
+        }
+
+        .anomaly-low {
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            color: #22d3ee;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen relative">
+
+    <!-- Background Grid -->
+    <div class="fixed inset-0 cyber-grid pointer-events-none z-0"></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 py-6">
+
+        <!-- ========== HEADER ========== -->
+        <header class="flex flex-col sm:flex-row justify-between items-center mb-10 border-b border-gray-800/60 pb-5">
+            <div class="flex items-center gap-4 mb-3 sm:mb-0">
+                <!-- Animated Shield SVG -->
+                <div class="w-14 h-14 relative flex items-center justify-center">
+                    <div class="absolute inset-0 bg-cyan-500 blur-xl opacity-20 animate-pulse rounded-full"></div>
+                    <svg class="w-11 h-11 text-cyan-400 relative z-10" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                        </path>
+                    </svg>
+                </div>
+                <div>
+                    <h1
+                        class="font-cyber text-2xl sm:text-3xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500">
+                        CYBER GUARD AI
+                    </h1>
+                    <p class="text-[10px] sm:text-xs text-cyan-700 tracking-[0.3em] font-semibold">V3.0 // NEURAL
+                        DEFENSE GRID</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-6 text-sm">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_#22c55e]"></span>
+                    <span class="text-gray-400 text-xs font-mono">SYSTEM ONLINE</span>
+                </div>
+
+                {% if current_user.is_authenticated %}
+                <div class="flex items-center gap-4 border-l border-gray-800 pl-6 ml-2">
+                    <div class="text-right hidden sm:block">
+                        <div class="text-[10px] text-gray-500 uppercase tracking-wider">OPERATOR</div>
+                        <div class="text-cyan-400 font-mono text-xs font-bold tracking-wide">{{
+                            current_user.username|upper }}</div>
+                    </div>
+                    <a href="{{ url_for('auth.logout') }}"
+                        class="group relative px-4 py-1.5 rounded border border-red-500/30 text-red-400 text-xs font-mono hover:bg-red-500/10 transition-colors overflow-hidden">
+                        <span class="relative z-10 group-hover:text-red-300">LOGOUT</span>
+                        <div
+                            class="absolute inset-0 bg-red-500/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </header>
+
+        <!-- ========== DUAL ENGINE GRID ========== -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+
+            <!-- ===== LEFT CARD: URL INTELLIGENCE ===== -->
+            <div class="glass-panel neon-cyan rounded-2xl p-6 sm:p-8 relative overflow-hidden" id="url-card">
+                <div class="scanner-line scanner-cyan" id="url-scanner"></div>
+
+                <!-- Card Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="font-cyber text-lg sm:text-xl text-cyan-300 flex items-center gap-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        URL INTELLIGENCE
+                    </h2>
+                    <span class="text-[10px] font-mono px-2 py-1 rounded border
+                        {% if models_status.url_model and models_status.tokenizer %}
+                            text-cyan-400 border-cyan-800 engine-online
+                        {% else %}
+                            text-red-400 border-red-800 engine-offline
+                        {% endif %}">
+                        {% if models_status.url_model and models_status.tokenizer %}LSTM-BiRNN ACTIVE{% else %}SAFE
+                        MODE{% endif %}
+                    </span>
+                </div>
+
+                <!-- URL Input -->
+                <div class="space-y-4">
+                    <div class="relative">
+                        <input type="text" id="url-input" placeholder="ENTER TARGET URL..."
+                            class="w-full bg-gray-900/60 border border-gray-700/60 text-cyan-100 px-5 py-4 rounded-lg focus:outline-none focus:border-cyan-500 focus:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all font-mono text-sm tracking-wide placeholder-gray-600">
+                        <div class="absolute right-4 top-4 text-gray-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <button onclick="analyzeURL()" id="url-btn"
+                        class="w-full bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white font-bold py-3.5 rounded-lg shadow-lg transform hover:scale-[1.02] transition-all duration-200 border-t border-cyan-400/20 flex items-center justify-center gap-3 text-sm">
+                        <span id="url-btn-text">INITIATE TRAFFIC ANALYSIS</span>
+                        <div class="loader loader-cyan hidden" id="url-loader"></div>
+                    </button>
+                </div>
+
+                <!-- URL Result Panel -->
+                <div id="url-result" class="mt-6 hidden"></div>
+            </div>
+
+            <!-- ===== RIGHT CARD: VISUAL ANOMALY DETECTION ===== -->
+            <div class="glass-panel neon-purple rounded-2xl p-6 sm:p-8 relative overflow-hidden" id="img-card">
+                <div class="scanner-line scanner-purple" id="img-scanner"></div>
+
+                <!-- Card Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="font-cyber text-lg sm:text-xl text-purple-300 flex items-center gap-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                            </path>
+                        </svg>
+                        PHISHING SCREENSHOT SCAN
+                    </h2>
+                    <span class="text-[10px] font-mono px-2 py-1 rounded border
+                        {% if models_status.image_model %}
+                            text-purple-400 border-purple-800 engine-online
+                        {% else %}
+                            text-red-400 border-red-800 engine-offline
+                        {% endif %}">
+                        {% if models_status.image_model %}AUTOENCODER ACTIVE{% else %}SAFE MODE{% endif %}
+                    </span>
+                </div>
+
+                <!-- Upload Zone -->
+                <div class="space-y-4">
+                    <label class="block w-full cursor-pointer" id="upload-label">
+                        <div class="img-preview-zone rounded-lg p-6 text-center relative overflow-hidden"
+                            id="drop-zone">
+                            <div class="scanner-line scanner-purple" id="img-visual-scanner"></div>
+                            <div id="upload-placeholder">
+                                <svg class="w-10 h-10 text-gray-600 mx-auto mb-2" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                </svg>
+                                <span class="text-gray-500 text-sm">UPLOAD SCREENSHOT</span>
+                                <p class="text-gray-700 text-[10px] mt-1 font-mono">PNG / JPG / JPEG</p>
+                                <p class="text-gray-600 text-[9px] mt-2 leading-relaxed max-w-[220px] mx-auto">
+                                    Upload a screenshot of a suspicious <strong class="text-purple-400/70">login page</strong> or
+                                    <strong class="text-purple-400/70">web page</strong> to detect phishing.
+                                    Random photos will produce unreliable results.
+                                </p>
+                            </div>
+                            <img id="img-preview" class="hidden mx-auto rounded" alt="Preview">
+                            <input type="file" id="img-input" class="hidden" accept=".png,.jpg,.jpeg">
+                        </div>
+                    </label>
+
+                    <button onclick="analyzeImage()" id="img-btn"
+                        class="w-full bg-gradient-to-r from-purple-600 to-fuchsia-700 hover:from-purple-500 hover:to-fuchsia-600 text-white font-bold py-3.5 rounded-lg shadow-lg transform hover:scale-[1.02] transition-all duration-200 border-t border-purple-400/20 flex items-center justify-center gap-3 text-sm">
+                        <span id="img-btn-text">DECODE VISUAL MANIFOLD</span>
+                        <div class="loader loader-purple hidden" id="img-loader"></div>
+                    </button>
+                </div>
+
+                <!-- Image Result Panel -->
+                <div id="img-result" class="mt-6 hidden"></div>
+            </div>
+        </div>
+
+        <!-- ========== LIVE THREAT FEED ========== -->
+        <div class="glass-panel rounded-2xl p-6" id="feed-panel">
+            <div class="flex items-center justify-between mb-4 border-b border-gray-800/60 pb-3">
+                <h3 class="font-cyber text-sm text-gray-300 tracking-wider flex items-center gap-2">
+                    <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    LIVE THREAT FEED
+                </h3>
+                <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping"></span>
+                    <span class="text-[10px] text-red-400 font-mono">REAL-TIME</span>
+                </div>
+            </div>
+
+            <!-- Feed Table -->
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-xs font-mono">
+                    <thead>
+                        <tr class="text-gray-500 border-b border-gray-800/40">
+                            <th class="text-left py-2 px-3 w-20">TIME</th>
+                            <th class="text-left py-2 px-3 w-16">TYPE</th>
+                            <th class="text-left py-2 px-3">TARGET</th>
+                            <th class="text-left py-2 px-3 w-28">VERDICT</th>
+                            <th class="text-right py-2 px-3 w-20">SCORE</th>
+                            <th class="text-right py-2 px-3 w-44">ANALYSIS METHOD</th>
+                        </tr>
+                    </thead>
+                    <tbody id="feed-body">
+                        {% for log in logs %}
+                        <tr class="border-b border-gray-800/20 hover:bg-gray-800/30 transition-colors">
+                            <td class="py-2.5 px-3 text-gray-500">{{ log.timestamp }}</td>
+                            <td class="py-2.5 px-3">
+                                <span
+                                    class="px-1.5 py-0.5 rounded text-[10px] {% if log.scan_type == 'URL' %}type-url{% else %}type-img{% endif %}">
+                                    {{ log.scan_type }}
+                                </span>
+                            </td>
+                            <td class="py-2.5 px-3 text-gray-300 truncate max-w-[250px]" title="{{ log.input_data }}">{{
+                                log.input_data }}</td>
+                            <td class="py-2.5 px-3">
+                                <span
+                                    class="font-bold {% if log.result_status == 'SAFE' or log.result_status == 'LEGITIMATE' %}text-green-400{% elif log.result_status == 'PHISHING' %}text-purple-400{% elif log.result_status == 'SUSPICIOUS' %}text-yellow-400{% else %}text-red-400{% endif %}">
+                                    {{ log.result_status }}
+                                </span>
+                            </td>
+                            <td class="py-2.5 px-3 text-right text-gray-400">
+                                {% if log.scan_type == 'IMG' %}
+                                {{ log.confidence_score }}
+                                {% else %}
+                                {{ log.confidence_score }}%
+                                {% endif %}
+                            </td>
+                            <td class="py-2.5 px-3 text-right">
+                                <span class="px-2 py-0.5 rounded text-[10px]
+                                    {% if 'Local Intel' in (log.analysis_method or '') %}method-local
+                                    {% elif 'Neural' in (log.analysis_method or '') or 'LSTM' in (log.analysis_method or '') %}method-neural
+                                    {% elif 'Consensus' in (log.analysis_method or '') %}method-consensus
+                                    {% elif 'Whitelist' in (log.analysis_method or '') %}method-whitelist
+                                    {% elif 'Safe Mode' in (log.analysis_method or '') %}method-safe-mode
+                                    {% else %}text-gray-600{% endif %}">
+                                    {{ log.analysis_method }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% if not logs %}
+                        <tr>
+                            <td colspan="6" class="py-8 text-center text-gray-600">No scans recorded yet. Initiate your
+                                first analysis above.</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script>
+        // ================================================================
+        // URL ANALYSIS (AJAX) - with Forensic Attribution
+        // ================================================================
+        async function analyzeURL() {
+            const input = document.getElementById('url-input');
+            const url = input.value.trim();
+            if (!url) { input.focus(); return; }
+
+            const scanner = document.getElementById('url-scanner');
+            const btn = document.getElementById('url-btn');
+            const btnText = document.getElementById('url-btn-text');
+            const loader = document.getElementById('url-loader');
+
+            scanner.classList.add('scan-active');
+            btn.disabled = true;
+            btnText.textContent = 'SCANNING...';
+            loader.classList.remove('hidden');
+
+            try {
+                const form = new FormData();
+                form.append('url', url);
+                const res = await fetch('/analyze/url', { method: 'POST', body: form });
+                const data = await res.json();
+
+                if (data.error) {
+                    showURLResult({ result: 'ERROR', score: 0, source: data.error });
+                } else {
+                    showURLResult(data);
+                }
+                refreshFeed();
+            } catch (err) {
+                showURLResult({ result: 'ERROR', score: 0, source: 'Network Error' });
+            } finally {
+                setTimeout(() => { scanner.classList.remove('scan-active'); }, 1800);
+                btn.disabled = false;
+                btnText.textContent = 'INITIATE TRAFFIC ANALYSIS';
+                loader.classList.add('hidden');
+            }
+        }
+
+        // Enter key to submit URL
+        document.getElementById('url-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') analyzeURL();
+        });
+
+        function showURLResult(data) {
+            const el = document.getElementById('url-result');
+            const isSafe = data.result === 'SAFE';
+            const isSuspicious = data.result === 'SUSPICIOUS';
+            const category = data.metadata?.category;
+
+            // Determine badge style
+            let badgeClass, borderColor, barColor, threatLabel;
+            if (isSafe) {
+                badgeClass = 'badge-safe';
+                borderColor = 'border-green-500/40';
+                barColor = 'from-green-600 to-green-400';
+                threatLabel = 'SAFE';
+            } else if (isSuspicious) {
+                badgeClass = 'badge-suspicious';
+                borderColor = 'border-amber-500/40';
+                barColor = 'from-amber-600 to-yellow-400';
+                threatLabel = 'SUSPICIOUS';
+            } else if (category === 'Phishing') {
+                badgeClass = 'badge-phishing';
+                borderColor = 'border-purple-500/40';
+                barColor = 'from-purple-600 to-fuchsia-400';
+                threatLabel = 'PHISHING DETECTED';
+            } else if (category === 'Defacement') {
+                badgeClass = 'badge-defacement';
+                borderColor = 'border-amber-500/40';
+                barColor = 'from-amber-600 to-yellow-400';
+                threatLabel = 'DEFACEMENT DETECTED';
+            } else if (category === 'Malware') {
+                badgeClass = 'badge-malware';
+                borderColor = 'border-red-500/40';
+                barColor = 'from-red-600 to-red-400';
+                threatLabel = 'MALWARE DETECTED';
+            } else {
+                badgeClass = 'badge-danger';
+                borderColor = 'border-red-500/40';
+                barColor = 'from-red-600 to-red-400';
+                threatLabel = 'THREAT DETECTED';
+            }
+
+            // Build forensic feature badges HTML
+            let forensicHTML = '';
+            const forensic = data.forensic;
+            if (forensic) {
+                // Safe Mode banner
+                if (data.safe_mode) {
+                    forensicHTML += `
+                        <div class="mt-3 px-3 py-2 rounded-lg bg-red-900/20 border border-red-500/30 text-red-400 text-[11px] font-mono flex items-center gap-2">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            Safe Mode: Heuristic Analysis Only
+                        </div>`;
+                }
+
+                // Forensic Analysis Section
+                forensicHTML += `<div class="forensic-section mt-4 p-4 rounded-lg">`;
+                forensicHTML += `<div class="text-[10px] font-cyber text-gray-400 tracking-widest mb-3 flex items-center gap-2">
+                    <svg class="w-3.5 h-3.5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                    FORENSIC ANALYSIS
+                </div>`;
+
+                // Top 3 Suspicious Features (XAI Attribution Badges)
+                if (forensic.top_features && forensic.top_features.length > 0) {
+                    forensicHTML += `<div class="mb-3">
+                        <div class="text-[10px] text-gray-500 font-mono mb-2 uppercase tracking-wider">Suspicious Feature Attribution</div>
+                        <div class="space-y-2">`;
+
+                    forensic.top_features.forEach((feat, i) => {
+                        const sevClass = feat.severity === 'High' ? 'severity-high'
+                            : feat.severity === 'Medium' ? 'severity-medium' : 'severity-low';
+                        const sevColor = feat.severity === 'High' ? 'text-red-400'
+                            : feat.severity === 'Medium' ? 'text-amber-400' : 'text-cyan-400';
+
+                        forensicHTML += `
+                            <div class="feature-badge ${sevClass} rounded-lg px-3 py-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-semibold text-gray-200">${feat.name}</span>
+                                    <span class="text-[10px] font-mono ${sevColor} px-1.5 py-0.5 rounded bg-gray-900/50">${feat.severity}</span>
+                                </div>
+                                <div class="text-[10px] text-gray-500 mt-0.5">${feat.description}</div>
+                                <div class="mt-1 h-1 bg-gray-800 rounded-full overflow-hidden">
+                                    <div class="h-full rounded-full ${feat.severity === 'High' ? 'bg-red-500' : feat.severity === 'Medium' ? 'bg-amber-500' : 'bg-cyan-500'}"
+                                         style="width: ${Math.round(feat.severity_score * 100)}%"></div>
+                                </div>
+                            </div>`;
+                    });
+                    forensicHTML += `</div></div>`;
+                }
+
+                // Layer Votes (Consensus Breakdown)
+                if (forensic.layer_votes && forensic.layer_votes.length > 0) {
+                    forensicHTML += `<div class="mt-3">
+                        <div class="text-[10px] text-gray-500 font-mono mb-2 uppercase tracking-wider">Ensemble Consensus Breakdown</div>
+                        <div class="space-y-1">`;
+
+                    forensic.layer_votes.forEach(vote => {
+                        const voteClass = vote.vote === 'SAFE' ? 'vote-safe'
+                            : vote.vote === 'MALICIOUS' ? 'vote-malicious' : 'vote-abstain';
+                        const voteIcon = vote.vote === 'SAFE' ? '&#10003;'
+                            : vote.vote === 'MALICIOUS' ? '&#10007;' : '&#8211;';
+
+                        forensicHTML += `
+                            <div class="flex items-center justify-between text-[10px] font-mono py-1 px-2 rounded bg-gray-900/30">
+                                <span class="text-gray-400 w-32 truncate">${vote.layer}</span>
+                                <span class="${voteClass} font-bold w-20 text-center">${voteIcon} ${vote.vote}</span>
+                                <span class="text-gray-500 w-16 text-right">${vote.confidence}%</span>
+                            </div>`;
+                    });
+                    forensicHTML += `</div>`;
+
+                    // Consensus ratio
+                    if (forensic.consensus_ratio !== undefined) {
+                        forensicHTML += `
+                            <div class="mt-2 flex items-center justify-between text-[10px] font-mono text-gray-500">
+                                <span>Consensus: ${Math.round(forensic.consensus_ratio * 100)}%</span>
+                                <span class="text-gray-600">${forensic.explanation || ''}</span>
+                            </div>`;
+                    }
+                    forensicHTML += `</div>`;
+                }
+
+                forensicHTML += `</div>`; // close forensic-section
+            }
+
+            el.innerHTML = `
+                <div class="result-enter bg-gray-900/70 p-5 rounded-xl border ${borderColor}">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <div class="text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-1">Target Classification</div>
+                            <div class="inline-flex items-center gap-2 ${badgeClass} px-4 py-2 rounded-lg">
+                                ${isSafe
+                    ? '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
+                    : '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>'
+                }
+                                <span class="font-cyber text-xl font-bold tracking-wider">${threatLabel}</span>
+                            </div>
+                            <div class="mt-2 flex items-center gap-2 text-xs">
+                                <span class="text-gray-500">Source:</span>
+                                <span class="text-cyan-400 font-mono border-b border-cyan-500/30">${data.source}</span>
+                            </div>
+                        </div>
+                        <div class="min-w-[160px]">
+                            <div class="flex justify-between text-[10px] mb-1.5 font-mono">
+                                <span class="text-gray-500">CONFIDENCE</span>
+                                <span class="text-cyan-300">${data.score}%</span>
+                            </div>
+                            <div class="h-3 bg-gray-800 rounded-full overflow-hidden border border-gray-700/50">
+                                <div class="h-full bg-gradient-to-r ${barColor} rounded-full transition-all duration-1000" style="width: 0%" id="url-conf-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    ${forensicHTML}
+                </div>`;
+
+            el.classList.remove('hidden');
+            setTimeout(() => {
+                const bar = document.getElementById('url-conf-bar');
+                if (bar) bar.style.width = data.score + '%';
+            }, 50);
+        }
+
+        // ================================================================
+        // IMAGE ANALYSIS (AJAX) - with Forensic Heatmap
+        // ================================================================
+        const imgInput = document.getElementById('img-input');
+        const imgPreview = document.getElementById('img-preview');
+        const uploadPlaceholder = document.getElementById('upload-placeholder');
+        const dropZone = document.getElementById('drop-zone');
+
+        imgInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) showPreview(file);
+        });
+
+        // Drag & drop
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('drag-over'); });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                imgInput.files = dt.files;
+                showPreview(file);
+            }
+        });
+
+        function showPreview(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imgPreview.src = e.target.result;
+                imgPreview.classList.remove('hidden');
+                uploadPlaceholder.classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function analyzeImage() {
+            const file = imgInput.files[0];
+            if (!file) { dropZone.classList.add('drag-over'); setTimeout(() => dropZone.classList.remove('drag-over'), 800); return; }
+
+            const cardScanner = document.getElementById('img-scanner');
+            const visualScanner = document.getElementById('img-visual-scanner');
+            const btn = document.getElementById('img-btn');
+            const btnText = document.getElementById('img-btn-text');
+            const loader = document.getElementById('img-loader');
+
+            cardScanner.classList.add('scan-active');
+            visualScanner.classList.add('scan-active');
+            btn.disabled = true;
+            btnText.textContent = 'DECODING...';
+            loader.classList.remove('hidden');
+
+            try {
+                const form = new FormData();
+                form.append('file', file);
+                const res = await fetch('/analyze/image', { method: 'POST', body: form });
+                const data = await res.json();
+
+                if (data.error) {
+                    showImageResult({ result: 'ERROR', mse: 0, source: data.error, threshold: 0.022 });
+                } else {
+                    showImageResult(data);
+                }
+                refreshFeed();
+            } catch (err) {
+                showImageResult({ result: 'ERROR', mse: 0, source: 'Network Error', threshold: 0.022 });
+            } finally {
+                setTimeout(() => {
+                    cardScanner.classList.remove('scan-active');
+                    visualScanner.classList.remove('scan-active');
+                }, 1800);
+                btn.disabled = false;
+                btnText.textContent = 'DECODE VISUAL MANIFOLD';
+                loader.classList.add('hidden');
+            }
+        }
+
+        function showImageResult(data) {
+            const el = document.getElementById('img-result');
+            const isLegit = data.result === 'LEGITIMATE';
+            const isError = data.result === 'ERROR';
+            const borderColor = isLegit ? 'border-green-500/40' : 'border-purple-500/40';
+
+            // MSE bar
+            const msePercent = Math.min(100, (data.mse / 0.05) * 100);
+            const threshPercent = (data.threshold / 0.05) * 100;
+
+            // Build forensic section HTML
+            let forensicHTML = '';
+            const forensic = data.forensic;
+
+            if (forensic || data.safe_mode) {
+                // Safe Mode banner
+                if (data.safe_mode) {
+                    forensicHTML += `
+                        <div class="mt-3 px-3 py-2 rounded-lg bg-red-900/20 border border-red-500/30 text-red-400 text-[11px] font-mono flex items-center gap-2">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            Safe Mode: Heuristic Analysis Only
+                        </div>`;
+                }
+
+                if (forensic) {
+                    forensicHTML += `<div class="forensic-section mt-4 p-4 rounded-lg">`;
+                    forensicHTML += `<div class="text-[10px] font-cyber text-gray-400 tracking-widest mb-3 flex items-center gap-2">
+                        <svg class="w-3.5 h-3.5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                        FORENSIC ANALYSIS
+                    </div>`;
+
+                    // SSIM Score display
+                    if (data.ssim !== undefined) {
+                        const ssimColor = data.ssim >= 0.85 ? 'text-green-400' : 'text-red-400';
+                        forensicHTML += `
+                            <div class="flex items-center justify-between text-[10px] font-mono mb-3 px-2 py-1.5 rounded bg-gray-900/40">
+                                <span class="text-gray-500">SSIM STRUCTURAL SIMILARITY</span>
+                                <span class="${ssimColor} font-bold">${data.ssim}</span>
+                            </div>`;
+                    }
+
+                    // Heatmap Triptych Image
+                    if (forensic.heatmap_url) {
+                        forensicHTML += `
+                            <div class="mb-3">
+                                <div class="text-[10px] text-gray-500 font-mono mb-2 uppercase tracking-wider">Visual Forensic Heatmap</div>
+                                <div class="heatmap-container rounded-lg p-2 overflow-hidden">
+                                    <img src="${forensic.heatmap_url}" alt="Forensic Heatmap: Original | Heatmap | Anomaly Highlight"
+                                         class="rounded" loading="lazy">
+                                </div>
+                                <div class="flex justify-between text-[9px] font-mono text-gray-600 mt-1 px-1">
+                                    <span>ORIGINAL</span>
+                                    <span>RECONSTRUCTION HEATMAP</span>
+                                    <span>ANOMALY HIGHLIGHT</span>
+                                </div>
+                            </div>`;
+                    }
+
+                    // Anomalous Regions
+                    if (forensic.anomalous_regions && forensic.anomalous_regions.length > 0) {
+                        forensicHTML += `
+                            <div class="mt-3">
+                                <div class="text-[10px] text-gray-500 font-mono mb-2 uppercase tracking-wider">Anomalous Regions Detected</div>
+                                <div class="space-y-1.5">`;
+
+                        forensic.anomalous_regions.forEach(region => {
+                            const regionClass = region.severity === 'HIGH' ? 'anomaly-high'
+                                : region.severity === 'MEDIUM' ? 'anomaly-medium' : 'anomaly-low';
+
+                            forensicHTML += `
+                                <div class="${regionClass} px-3 py-2 rounded-lg text-[10px] font-mono flex items-center justify-between">
+                                    <div>
+                                        <span class="font-semibold">${region.name}</span>
+                                        <span class="text-gray-500 ml-2">max: ${region.max_error}</span>
+                                    </div>
+                                    <span class="px-1.5 py-0.5 rounded font-bold text-[9px]">${region.severity}</span>
+                                </div>`;
+                        });
+                        forensicHTML += `</div></div>`;
+                    }
+
+                    forensicHTML += `</div>`; // close forensic-section
+                }
+            }
+
+            el.innerHTML = `
+                <div class="result-enter bg-gray-900/70 p-5 rounded-xl border ${borderColor}">
+                    <div class="text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-2">Visual Classification</div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="inline-flex items-center gap-2 ${isLegit ? 'badge-legit' : 'badge-phishing'} px-4 py-2 rounded-lg">
+                            ${isLegit
+                    ? '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
+                    : '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>'
+                }
+                            <span class="font-cyber text-lg font-bold tracking-wider">${isLegit ? 'LEGITIMATE' : (isError ? 'ERROR' : 'PHISHING ANOMALY')}</span>
+                        </div>
+                        ${data.verdict_tier ? `<span class="text-[10px] font-mono px-2 py-0.5 rounded ${data.verdict_tier === 'SAFE' ? 'badge-safe' :
+                        data.verdict_tier === 'SUSPICIOUS' ? 'badge-suspicious' :
+                            data.verdict_tier === 'MALICIOUS' ? 'badge-danger' : 'text-gray-500'
+                    }">${data.verdict_tier}</span>` : ''}
+                    </div>
+                    <!-- MSE Score Bar -->
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between text-[10px] font-mono">
+                            <span class="text-gray-500">MSE RECONSTRUCTION SCORE</span>
+                            <span class="${isLegit ? 'text-green-400' : 'text-purple-400'}">${data.mse}</span>
+                        </div>
+                        <div class="relative h-3 bg-gray-800 rounded-full overflow-hidden border border-gray-700/50">
+                            <div class="absolute top-0 h-full w-px bg-yellow-500/70" style="left: ${threshPercent}%;" title="Threshold: ${data.threshold}"></div>
+                            <div class="h-full bg-gradient-to-r ${isLegit ? 'from-green-600 to-green-400' : 'from-purple-600 to-fuchsia-400'} rounded-full transition-all duration-1000" style="width: 0%" id="mse-bar"></div>
+                        </div>
+                        <div class="flex justify-between text-[9px] font-mono text-gray-600">
+                            <span>0.000</span>
+                            <span class="text-yellow-600">THRESHOLD: ${data.threshold}</span>
+                            <span>0.050</span>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-[10px] text-gray-600 font-mono">Engine: ${data.source}</div>
+                    ${forensicHTML}
+                </div>`;
+
+            el.classList.remove('hidden');
+            setTimeout(() => {
+                const bar = document.getElementById('mse-bar');
+                if (bar) bar.style.width = msePercent + '%';
+            }, 50);
+        }
+
+        // ================================================================
+        // LIVE FEED REFRESH - with Analysis Method styling
+        // ================================================================
+        async function refreshFeed() {
+            try {
+                const res = await fetch('/api/feed');
+                const data = await res.json();
+                const tbody = document.getElementById('feed-body');
+
+                if (data.logs && data.logs.length > 0) {
+                    tbody.innerHTML = data.logs.map(log => {
+                        const isURL = log.type === 'URL';
+                        const typeClass = isURL ? 'type-url' : 'type-img';
+                        const isSafe = log.status === 'SAFE' || log.status === 'LEGITIMATE';
+                        const isPhishing = log.status === 'PHISHING';
+                        const isSuspicious = log.status === 'SUSPICIOUS';
+                        const statusColor = isSafe ? 'text-green-400'
+                            : isPhishing ? 'text-purple-400'
+                                : isSuspicious ? 'text-yellow-400'
+                                    : 'text-red-400';
+                        const scoreDisplay = isURL ? log.confidence + '%' : log.confidence;
+
+                        // Analysis method styling
+                        const method = log.method || '';
+                        let methodClass = 'text-gray-600';
+                        if (method.includes('Local Intel')) methodClass = 'method-local';
+                        else if (method.includes('Neural') || method.includes('LSTM')) methodClass = 'method-neural';
+                        else if (method.includes('Consensus')) methodClass = 'method-consensus';
+                        else if (method.includes('Whitelist')) methodClass = 'method-whitelist';
+                        else if (method.includes('Safe Mode')) methodClass = 'method-safe-mode';
+
+                        return `<tr class="border-b border-gray-800/20 hover:bg-gray-800/30 transition-colors result-enter">
+                            <td class="py-2.5 px-3 text-gray-500">${log.timestamp}</td>
+                            <td class="py-2.5 px-3"><span class="px-1.5 py-0.5 rounded text-[10px] ${typeClass}">${log.type}</span></td>
+                            <td class="py-2.5 px-3 text-gray-300 truncate max-w-[250px]" title="${log.input}">${log.input}</td>
+                            <td class="py-2.5 px-3"><span class="font-bold ${statusColor}">${log.status}</span></td>
+                            <td class="py-2.5 px-3 text-right text-gray-400">${scoreDisplay}</td>
+                            <td class="py-2.5 px-3 text-right"><span class="${methodClass}">${method}</span></td>
+                        </tr>`;
+                    }).join('');
+                }
+            } catch (err) {
+                console.error('Feed refresh failed:', err);
+            }
+        }
+
+        // ================================================================
+        // GSAP ENTRANCE ANIMATIONS
+        // ================================================================
+        gsap.from("header", { duration: 0.8, y: -40, opacity: 0, ease: "power3.out" });
+        gsap.from("#url-card", { duration: 0.7, x: -40, opacity: 0, ease: "back.out(1.4)", delay: 0.2 });
+        gsap.from("#img-card", { duration: 0.7, x: 40, opacity: 0, ease: "back.out(1.4)", delay: 0.35 });
+        gsap.from("#feed-panel", { duration: 0.6, y: 30, opacity: 0, ease: "power2.out", delay: 0.5 });
+
+        // Auto-refresh feed every 15 seconds
+        setInterval(refreshFeed, 15000);
+    </script>
+</body>
+
+</html>
