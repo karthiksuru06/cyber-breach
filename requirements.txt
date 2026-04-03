@@ -1,6 +1,6 @@
 flask==2.3.3
-tensorflow==2.10.0
-tf-keras==2.15.0
+tensorflow>=2.10.0
+tf-keras>=2.15.0
 h5py
 pillow==10.2.0
 python-whois==0.8.0
