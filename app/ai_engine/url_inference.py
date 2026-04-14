@@ -84,14 +84,19 @@ def _neural_url_analysis(url: str) -> Tuple[str, float, str, Dict]:
         # Tokenize URL (character-level)
         sequences = tokenizer.texts_to_sequences([url])
 
-        # Pad to fixed length (200 characters)
-        padded = pad_sequences(sequences, maxlen=200, padding='post')
+        # Pad to fixed length (200 characters). Must use 'pre' padding to match train_lstm.py defaults
+        padded = pad_sequences(sequences, maxlen=200, padding='pre')
 
         # LSTM Inference
         raw_score = float(url_model.predict(padded, verbose=0)[0][0])
 
-        # Determine verdict
-        status = "MALICIOUS" if raw_score > 0.5 else "SAFE"
+        # Determine verdict based on confidence bounds
+        if raw_score > 0.8:
+            status = "MALICIOUS"
+        elif raw_score > 0.35:
+            status = "SUSPICIOUS"
+        else:
+            status = "SAFE"
 
         # Calculate confidence (distance from decision boundary)
         confidence = float(max(raw_score, 1 - raw_score))

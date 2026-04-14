@@ -6,7 +6,8 @@ Rebuilds model architectures in TF 2.x and loads Keras 3.x-saved weights.
 """
 
 import os
-import pickle
+import json
+from tensorflow.keras.preprocessing.text import tokenizer_from_json
 from tensorflow.keras import Sequential, Model
 from tensorflow.keras.layers import (
     Input, Embedding, SpatialDropout1D, Bidirectional,
@@ -23,15 +24,7 @@ _models_initialized = False
 URL_SEQUENCE_LENGTH = 200
 
 
-class _KerasCompatUnpickler(pickle.Unpickler):
-    """Remaps Keras 3.x module paths to Keras 2.x equivalents for unpickling."""
-
-    def find_class(self, module, name):
-        if module.startswith('keras.src.legacy.'):
-            module = 'keras.' + module[len('keras.src.legacy.'):]
-        elif module.startswith('keras.src.'):
-            module = 'keras.' + module[len('keras.src.'):]
-        return super().find_class(module, name)
+# Deprecated: _KerasCompatUnpickler removed because tokenizer is now loaded natively from JSON.
 
 
 def _build_url_model():
@@ -114,12 +107,12 @@ def init_models(app) -> bool:
         print(f"[WARN] Image Autoencoder not found: {img_model_path}")
         _img_model = None
 
-    # Load Tokenizer (with Keras 3.x compat unpickler)
-    tokenizer_path = os.path.join(models_dir, 'tokenizer.pkl')
+    # Load Tokenizer (using JSON to avoid Keras 2/3 pickle compatibility issues)
+    tokenizer_path = os.path.join(models_dir, 'tokenizer.json')
     if os.path.exists(tokenizer_path):
         try:
-            with open(tokenizer_path, 'rb') as f:
-                _tokenizer = _KerasCompatUnpickler(f).load()
+            with open(tokenizer_path, 'r', encoding='utf-8') as f:
+                _tokenizer = tokenizer_from_json(f.read())
             print("[OK] Tokenizer loaded successfully")
         except Exception as e:
             print(f"[FAIL] Tokenizer failed to load: {e}")

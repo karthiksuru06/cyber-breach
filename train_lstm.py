@@ -15,7 +15,7 @@ MAX_NUM_WORDS = 100 # Important to match the '100' input_dim in model_loader.py
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODELS_DIR = os.path.join(BASE_DIR, 'models')
 DATA_PATH = os.path.join(BASE_DIR, 'data', 'malicious_dataset.csv')
-TOKENIZER_PATH = os.path.join(MODELS_DIR, 'tokenizer.pkl')
+TOKENIZER_PATH = os.path.join(MODELS_DIR, 'tokenizer.json')
 MODEL_PATH = os.path.join(MODELS_DIR, 'url_lstm_v1.h5')
 
 def train():
@@ -32,9 +32,10 @@ def train():
     tokenizer = Tokenizer(char_level=True, lower=True, num_words=MAX_NUM_WORDS)
     tokenizer.fit_on_texts(urls)
 
-    # Save tokenizer
-    with open(TOKENIZER_PATH, 'wb') as f:
-        pickle.dump(tokenizer, f)
+    # Save tokenizer as JSON (avoids pickle versioning bugs between Keras 2/3)
+    tokenizer_json = tokenizer.to_json()
+    with open(TOKENIZER_PATH, 'w', encoding='utf-8') as f:
+        f.write(tokenizer_json)
     print(f"Saved tokenizer to {TOKENIZER_PATH}")
 
     # Sequence padding

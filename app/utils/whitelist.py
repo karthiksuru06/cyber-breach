@@ -12,25 +12,27 @@ from urllib.parse import urlparse
 AUTHORITY_DOMAINS = {
     # Tech Giants
     'google.com', 'facebook.com', 'microsoft.com', 'apple.com', 'amazon.com',
-    'youtube.com', 'twitter.com', 'instagram.com', 'linkedin.com',
+    'youtube.com', 'twitter.com', 'instagram.com', 'linkedin.com', 'openai.com',
 
     # Developer Platforms
-    'github.com', 'gitlab.com', 'stackoverflow.com', 'npm js.com',
+    'github.com', 'gitlab.com', 'stackoverflow.com', 'npmjs.com', 'geeksforgeeks.org', 
+    'chatgpt.com', 'medium.com', 'dev.to',
 
     # Cloud & Infrastructure
     'cloudflare.com', 'aws.amazon.com', 'azure.microsoft.com', 'cloud.google.com',
 
     # Enterprise SaaS
     'salesforce.com', 'slack.com', 'zoom.us', 'atlassian.com', 'dropbox.com',
+    'notion.so', 'figma.com',
 
     # Financial & Payment
-    'paypal.com', 'stripe.com',
+    'paypal.com', 'stripe.com', 'razorpay.com',
 
     # Media & Content
-    'netflix.com', 'reddit.com', 'wikipedia.org',
+    'netflix.com', 'reddit.com', 'wikipedia.org', 'quora.com',
 
     # Security & Development
-    'oracle.com', 'ibm.com', 'adobe.com',
+    'oracle.com', 'ibm.com', 'adobe.com', 'cisco.com',
 }
 
 
