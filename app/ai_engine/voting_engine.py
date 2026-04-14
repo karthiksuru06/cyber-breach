@@ -57,6 +57,7 @@ class VoteType(Enum):
     """Enumeration of vote outcomes."""
     SAFE = "SAFE"
     MALICIOUS = "MALICIOUS"
+    SUSPICIOUS = "SUSPICIOUS"
     ABSTAIN = "ABSTAIN"  # Layer doesn't have enough info to vote
 
 
@@ -418,10 +419,14 @@ class EnsembleVoter:
             raw_score = float(url_model.predict(padded, verbose=0)[0][0])
 
             # Convert to vote
-            if raw_score > 0.5:
+            if raw_score > 0.8:
                 confidence = raw_score
                 vote = VoteType.MALICIOUS
-                reason = f"Neural network detected threat (score: {raw_score:.3f})"
+                reason = f"Neural network detected severe threat (score: {raw_score:.3f})"
+            elif raw_score > 0.35:
+                confidence = raw_score
+                vote = VoteType.SUSPICIOUS
+                reason = f"Neural network detected suspicious activity (score: {raw_score:.3f})"
             else:
                 confidence = 1 - raw_score
                 vote = VoteType.SAFE
@@ -462,7 +467,8 @@ class EnsembleVoter:
         elif risk_score > 0.25:
             return LayerVote(
                 layer_name="Feature Analysis",
-                vote=VoteType.ABSTAIN,
+                vote=VoteType.SUSPICIOUS,
+
                 confidence=risk_score,
                 reason="Some suspicious features present",
                 metadata={"risk_score": risk_score}

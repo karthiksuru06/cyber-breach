@@ -794,9 +794,11 @@
 
                     forensic.layer_votes.forEach(vote => {
                         const voteClass = vote.vote === 'SAFE' ? 'vote-safe'
-                            : vote.vote === 'MALICIOUS' ? 'vote-malicious' : 'vote-abstain';
+                            : vote.vote === 'MALICIOUS' ? 'vote-malicious' 
+                            : vote.vote === 'SUSPICIOUS' ? 'text-amber-400' : 'vote-abstain';
                         const voteIcon = vote.vote === 'SAFE' ? '&#10003;'
-                            : vote.vote === 'MALICIOUS' ? '&#10007;' : '&#8211;';
+                            : vote.vote === 'MALICIOUS' ? '&#10007;' 
+                            : vote.vote === 'SUSPICIOUS' ? '&#9888;' : '&#8211;';
 
                         forensicHTML += `
                             <div class="flex items-center justify-between text-[10px] font-mono py-1 px-2 rounded bg-gray-900/30">
