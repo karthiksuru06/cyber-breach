@@ -503,5 +503,6 @@ class MasterEngine:
         else:
             mal_count = debug.get("malicious_votes", 0)
             safe_count = debug.get("safe_votes", 0)
-            if mal_count >= CONSENSUS_MIN_VOTES or safe_count >= CONSENSUS_MIN_VOTES: return "Consensus Neural"
+            suspicious_count = debug.get("suspicious_votes", 0)
+            if mal_count >= CONSENSUS_MIN_VOTES or safe_count >= CONSENSUS_MIN_VOTES or suspicious_count >= CONSENSUS_MIN_VOTES: return "Consensus Neural"
             return "Ensemble Analysis"

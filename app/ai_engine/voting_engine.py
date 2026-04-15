@@ -415,7 +415,7 @@ class EnsembleVoter:
 
         try:
             sequences = tokenizer.texts_to_sequences([self.url])
-            padded = pad_sequences(sequences, maxlen=200, padding='post')
+            padded = pad_sequences(sequences, maxlen=200, padding='pre')
             raw_score = float(url_model.predict(padded, verbose=0)[0][0])
 
             # Convert to vote
@@ -551,10 +551,12 @@ class EnsembleVoter:
         # Rule 4: Consensus voting
         malicious_votes = [v for v in self.votes if v.vote == VoteType.MALICIOUS]
         safe_votes = [v for v in self.votes if v.vote == VoteType.SAFE]
+        suspicious_votes = [v for v in self.votes if v.vote == VoteType.SUSPICIOUS]
         active_votes = [v for v in self.votes if v.vote != VoteType.ABSTAIN]
 
         malicious_count = len(malicious_votes)
         safe_count = len(safe_votes)
+        suspicious_count = len(suspicious_votes)
         total_active = len(active_votes)
 
         # Calculate weighted confidence
@@ -572,6 +574,26 @@ class EnsembleVoter:
                 debug_info={
                     "malicious_votes": malicious_count,
                     "safe_votes": safe_count,
+                    "suspicious_votes": suspicious_count,
+                    "abstain_votes": len(self.votes) - total_active
+                }
+            )
+
+        elif suspicious_count >= CONSENSUS_MINIMUM_VOTES:
+            avg_confidence = sum(v.confidence for v in suspicious_votes) / suspicious_count
+            consensus_ratio = suspicious_count / len(self.votes)
+
+            return EnsembleResult(
+                final_verdict="SUSPICIOUS",
+                confidence=avg_confidence * 100,
+                votes=self.votes,
+                top_features=top_features,
+                consensus_ratio=consensus_ratio,
+                explanation=f"{suspicious_count} layers agree: URL is suspicious",
+                debug_info={
+                    "malicious_votes": malicious_count,
+                    "safe_votes": safe_count,
+                    "suspicious_votes": suspicious_count,
                     "abstain_votes": len(self.votes) - total_active
                 }
             )
@@ -589,7 +611,8 @@ class EnsembleVoter:
                 explanation=f"{safe_count} layers agree: URL is safe",
                 debug_info={
                     "malicious_votes": malicious_count,
-                    "safe_votes": safe_count
+                    "safe_votes": safe_count,
+                    "suspicious_votes": suspicious_count
                 }
             )
 
@@ -605,6 +628,7 @@ class EnsembleVoter:
                 debug_info={
                     "malicious_votes": malicious_count,
                     "safe_votes": safe_count,
+                    "suspicious_votes": suspicious_count,
                     "abstain_votes": len(self.votes) - total_active
                 }
             )
