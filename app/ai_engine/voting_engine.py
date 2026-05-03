@@ -548,90 +548,84 @@ class EnsembleVoter:
                 debug_info={"override": "lstm_high_confidence"}
             )
 
-        # Rule 4: Consensus voting
-        malicious_votes = [v for v in self.votes if v.vote == VoteType.MALICIOUS]
-        safe_votes = [v for v in self.votes if v.vote == VoteType.SAFE]
-        suspicious_votes = [v for v in self.votes if v.vote == VoteType.SUSPICIOUS]
+        # Rule 4: Weighted Risk Scoring (replaces simple majority voting)
+        malicious_count = sum(1 for v in self.votes if v.vote == VoteType.MALICIOUS)
+        safe_count = sum(1 for v in self.votes if v.vote == VoteType.SAFE)
+        suspicious_count = sum(1 for v in self.votes if v.vote == VoteType.SUSPICIOUS)
         active_votes = [v for v in self.votes if v.vote != VoteType.ABSTAIN]
-
-        malicious_count = len(malicious_votes)
-        safe_count = len(safe_votes)
-        suspicious_count = len(suspicious_votes)
-        total_active = len(active_votes)
-
-        # Calculate weighted confidence
-        if malicious_count >= CONSENSUS_MINIMUM_VOTES:
-            avg_confidence = sum(v.confidence for v in malicious_votes) / malicious_count
-            consensus_ratio = malicious_count / len(self.votes)
-
-            return EnsembleResult(
-                final_verdict="MALICIOUS",
-                confidence=avg_confidence * 100,
-                votes=self.votes,
-                top_features=top_features,
-                consensus_ratio=consensus_ratio,
-                explanation=f"{malicious_count} layers agree: URL is malicious",
-                debug_info={
-                    "malicious_votes": malicious_count,
-                    "safe_votes": safe_count,
-                    "suspicious_votes": suspicious_count,
-                    "abstain_votes": len(self.votes) - total_active
-                }
-            )
-
-        elif suspicious_count >= CONSENSUS_MINIMUM_VOTES:
-            avg_confidence = sum(v.confidence for v in suspicious_votes) / suspicious_count
-            consensus_ratio = suspicious_count / len(self.votes)
-
-            return EnsembleResult(
-                final_verdict="SUSPICIOUS",
-                confidence=avg_confidence * 100,
-                votes=self.votes,
-                top_features=top_features,
-                consensus_ratio=consensus_ratio,
-                explanation=f"{suspicious_count} layers agree: URL is suspicious",
-                debug_info={
-                    "malicious_votes": malicious_count,
-                    "safe_votes": safe_count,
-                    "suspicious_votes": suspicious_count,
-                    "abstain_votes": len(self.votes) - total_active
-                }
-            )
-
-        elif safe_count >= CONSENSUS_MINIMUM_VOTES:
-            avg_confidence = sum(v.confidence for v in safe_votes) / safe_count
-            consensus_ratio = safe_count / len(self.votes)
-
-            return EnsembleResult(
-                final_verdict="SAFE",
-                confidence=avg_confidence * 100,
-                votes=self.votes,
-                top_features=top_features,
-                consensus_ratio=consensus_ratio,
-                explanation=f"{safe_count} layers agree: URL is safe",
-                debug_info={
-                    "malicious_votes": malicious_count,
-                    "safe_votes": safe_count,
-                    "suspicious_votes": suspicious_count
-                }
-            )
-
-        else:
-            # No consensus - mark as SUSPICIOUS
+        
+        if not active_votes:
             return EnsembleResult(
                 final_verdict="SUSPICIOUS",
                 confidence=50.0,
                 votes=self.votes,
                 top_features=top_features,
                 consensus_ratio=0.0,
-                explanation="Insufficient consensus between analysis layers",
-                debug_info={
-                    "malicious_votes": malicious_count,
-                    "safe_votes": safe_count,
-                    "suspicious_votes": suspicious_count,
-                    "abstain_votes": len(self.votes) - total_active
-                }
+                explanation="No data available from any layer",
+                debug_info={"abstain_votes": len(self.votes)}
             )
+
+        # Layer weights based on historical reliability
+        layer_weights = {
+            "Threat Intel (CSV)": 1.5,
+            "LSTM Neural": 1.2,
+            "Feature Analysis": 1.0,
+            "WHOIS Reputation": 0.8,
+            "Whitelist": 1.0
+        }
+
+        total_weight = 0.0
+        weighted_threat = 0.0
+
+        for v in active_votes:
+            weight = layer_weights.get(v.layer_name, 1.0)
+            
+            # Map vote to a threat probability (0.0 to 1.0)
+            if v.vote == VoteType.MALICIOUS:
+                threat_prob = v.confidence
+            elif v.vote == VoteType.SUSPICIOUS:
+                # Map suspicious confidence to a minimum 0.5 threat level
+                threat_prob = max(0.5, v.confidence)
+            elif v.vote == VoteType.SAFE:
+                threat_prob = 1.0 - v.confidence
+            else:
+                continue
+                
+            weighted_threat += threat_prob * weight
+            total_weight += weight
+            
+        final_risk_score = weighted_threat / total_weight if total_weight > 0 else 0.5
+        
+        # Amplification for consensus: boost confidence if multiple layers agree on threat
+        threat_votes = malicious_count + suspicious_count
+        if threat_votes >= 2:
+            # 15% boost for each agreeing threat layer beyond the first
+            boost_factor = 1.0 + (0.15 * (threat_votes - 1))
+            final_risk_score = min(final_risk_score * boost_factor, 0.99)
+            
+        # Determine verdict based on final risk score
+        if final_risk_score >= 0.70:
+            final_verdict = "MALICIOUS"
+        elif final_risk_score >= 0.40:
+            final_verdict = "SUSPICIOUS"
+        else:
+            final_verdict = "SAFE"
+            
+        return EnsembleResult(
+            final_verdict=final_verdict,
+            confidence=final_risk_score * 100,
+            votes=self.votes,
+            top_features=top_features,
+            consensus_ratio=len(active_votes) / len(self.votes),
+            explanation=f"Ensemble risk score: {final_risk_score:.2f} ({malicious_count} malicious, {suspicious_count} suspicious)",
+            debug_info={
+                "risk_score": final_risk_score,
+                "malicious_votes": malicious_count,
+                "safe_votes": safe_count,
+                "suspicious_votes": suspicious_count,
+                "abstain_votes": len(self.votes) - len(active_votes)
+            }
+        )
 
 
 # =============================================================================
